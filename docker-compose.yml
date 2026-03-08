@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # 1. DATABASE CHÍNH (PostgreSQL)
+  postgres:
+    image: postgres:15-alpine
+    container_name: ecommerce_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: ecommerce_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. DATABASE PHỤ (MongoDB - Lưu Đánh giá)
+  mongo:
+    image: mongo:6-jammy
+    container_name: ecommerce_mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: ecommerce_mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # 3. CACHING (Redis - Lưu Giỏ hàng)
+  redis:
+    image: redis:7-alpine
+    container_name: ecommerce_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  # 4. HÀNG ĐỢI (RabbitMQ - Xử lý gửi Mail)
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: ecommerce_rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: rootpassword
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+# Nơi lưu trữ dữ liệu cứng (Để tắt máy không bị mất data)
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:

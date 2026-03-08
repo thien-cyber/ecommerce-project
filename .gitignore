@@ -1,0 +1,12 @@
+# Bỏ qua thư mục thư viện
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Bỏ qua file môi trường (chứa mật khẩu)
+.env
+client/.env
+server/.env
+
+# Các file rác của hệ điều hành
+.DS_Store
